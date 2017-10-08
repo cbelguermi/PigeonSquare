@@ -13,13 +13,24 @@ public class Pigeon extends Thread
 
     public void run()
     {
-        int n=0;
-        while (n++ < 10) {
-            System.out.println(this.posx + " " + this.posy);
-            try {
-                Thread.sleep(10);
-            }
-            catch (InterruptedException e) {}
-       }
+        while (true)
+        {
+            //while (/*pas d'humain à coté &&*/  pas de nourriture à coté)
+            //{
+                try {
+                    if (Square.getInstance().getClosestFood(posx, posy) != -1)
+                    {
+                        System.out.println("I Found Food !!");
+                        break;
+                    }
+                    Thread.sleep(10);
+                }
+                catch (InterruptedException e) {}
+            //}
+            /*if (humain à coté)
+                se déplacer
+            if (nourriture)
+                se déplacer*/
+        }
     }
 }
