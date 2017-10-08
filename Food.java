@@ -21,5 +21,6 @@ public class Food extends Thread
         catch (InterruptedException e) {}
 
         healthy = false;
+        System.out.println("Food has become unhealthy");
     }
 }

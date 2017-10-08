@@ -15,22 +15,24 @@ public class Pigeon extends Thread
     {
         while (true)
         {
-            //while (/*pas d'humain à coté &&*/  pas de nourriture à coté)
-            //{
-                try {
-                    if (Square.getInstance().getClosestFood(posx, posy) != -1)
-                    {
-                        System.out.println("I Found Food !!");
-                        break;
-                    }
+            while (/*pas d'humain à coté &&*/  Square.getInstance().getClosestFood(posx, posy) == -1)
+            {
+                try
+                {
                     Thread.sleep(10);
                 }
-                catch (InterruptedException e) {}
-            //}
+                catch (InterruptedException e)
+                {
+                    break;
+                }
+            }
             /*if (humain à coté)
-                se déplacer
-            if (nourriture)
                 se déplacer*/
+            if (Square.getInstance().getClosestFood(posx, posy) != -1)
+            {
+                System.out.println("I Found Food !!");
+                break;
+            }
         }
     }
 }
