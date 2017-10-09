@@ -1,20 +1,32 @@
-package pigeon;
+package PigeonSquare;
+
+import java.util.Random;
 
 public class Human extends Thread
 {
-    int posx;
-    int posy;
+    private int posx;
+    private int posy;
 
-    public Human(int x, int y)
+    private HumanSprite sprite;
+
+    public Human(int x, int y, int h)
     {
         posx = x;
         posy = y;
+        sprite = new HumanSprite(x, y, h);
+    }
+
+    public HumanSprite getSprite()
+    {
+        return sprite;
     }
 
     public void run()
     {
+        Random r = new Random();
         while (true)
         {
+            getSprite().translateAnimation(2000, 20, 20);
             posx++;
             try {
                 Thread.sleep(2);

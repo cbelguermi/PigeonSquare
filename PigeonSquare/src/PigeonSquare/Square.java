@@ -1,4 +1,4 @@
-package pigeon;
+package PigeonSquare;
 
 public class Square
 {
