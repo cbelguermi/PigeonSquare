@@ -1,41 +1,64 @@
 package PigeonSquare;
 
 import java.util.Random;
+import javafx.animation.*;
+import javafx.scene.image.Image;
+import javafx.util.Duration;
 
-public class Human extends Thread
+public class Human extends Sprite implements Runnable
 {
-    private int posx;
-    private int posy;
+    private Random r;
 
-    private HumanSprite sprite;
-
-    public Human(int x, int y, int h)
+    public Human(double x, double y, double h)
     {
-        posx = x;
-        posy = y;
-        sprite = new HumanSprite(x, y, h);
+        super(new Image(Human.class.getResourceAsStream("images/passerby.png")), x, y, h);
+        r = new Random();
     }
 
-    public HumanSprite getSprite()
+    @Override
+    public void translateAnimation(int milliSec, double translateX, double translateY)
     {
-        return sprite;
+        Timeline timeline = new Timeline();
+        final int microMillisDuration = 10;
+
+        timeline.setCycleCount(milliSec / microMillisDuration);
+
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(microMillisDuration),
+                event -> {
+                    setX(getX() + 1);
+                    setY(getY() + 1);
+                    SquareController.getInstance().checkForCollision(this);
+        });
+
+        timeline.getKeyFrames().add(keyFrame);
+
+        timeline.play();
+    }
+
+    public void randomMove()
+    {
+        if (r.nextInt(100) >= 70) // move
+        {
+            if (r.nextInt(2) == 1)
+            {
+                resetPosition(0, 0);
+                translateAnimation(10000, SquareWindow.SCENE_WIDTH, SquareWindow.SCENE_HEIGHT);
+            }
+            else
+            {
+                resetPosition(SquareWindow.SCENE_WIDTH, SquareWindow.SCENE_HEIGHT);
+                translateAnimation(10000, -SquareWindow.SCENE_WIDTH, -SquareWindow.SCENE_HEIGHT);
+            }
+        }
     }
 
     public void run()
     {
-        Random r = new Random();
         while (true)
         {
-            getSprite().translateAnimation(2000, 20, 20);
-            posx++;
+            randomMove();
             try {
-                Thread.sleep(2);
-            }
-            catch (InterruptedException e) {}
-
-            posy+=2;
-            try {
-                Thread.sleep(2);
+                Thread.sleep(2000);
             }
             catch (InterruptedException e) {}
         }

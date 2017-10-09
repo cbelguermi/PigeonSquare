@@ -6,19 +6,10 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-
 public class SquareWindow extends Application
 {
-    private static int SCENE_WIDTH = 1000;
-    private static int SCENE_HEIGHT = 1000;
-
-    private static ArrayList<Pigeon> pigeons;
-    private static Human passerBy;
-
-    public static Human getPasserBy() {
-        return passerBy;
-    }
+    public final static int SCENE_WIDTH = 1000;
+    public final static int SCENE_HEIGHT = 1000;
 
     @Override
     public void start(Stage primaryStage)
@@ -27,34 +18,29 @@ public class SquareWindow extends Application
         Group root = new Group();
         Scene scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT, Color.WHITE);
 
-        passerBy = new Human(-10, -10, 50);
-        root.getChildren().add(passerBy.getSprite());
+        /* Set elements on scene */
+        Human passerBy = new Human(0, 0, 50);
+        SquareController.getInstance().addHuman(passerBy);
+        root.getChildren().add(passerBy);
+        Pigeon pigeon1 = new Pigeon(50, 50, 50);
+        Pigeon pigeon2 = new Pigeon(400, 400, 50);
+        SquareController.getInstance().addPigeon(pigeon1);
+        SquareController.getInstance().addPigeon(pigeon2);
+        root.getChildren().add(pigeon1);
+        root.getChildren().add(pigeon2);
 
-        pigeons = new ArrayList<>();
-        pigeons.add(new Pigeon(50, 50, 50));
-        pigeons.add(new Pigeon(400, 400, 50));
+        Food food01 = new Food(8,9, 50);
+        SquareController.getInstance().addFood(food01);
+        root.getChildren().add(food01);
 
-        for (Pigeon pigeon : pigeons)
-        {
-            root.getChildren().add(pigeon.getSprite());
-            pigeon.start();
-        }
+        Food food02 = new Food(15,500, 50);
+        SquareController.getInstance().addFood(food02);
+        root.getChildren().add(food02);
 
-        passerBy.start();
+        SquareController.getInstance().printFoods();
 
         primaryStage.setScene(scene);
         primaryStage.show();
-
-        Food food01 = new Food(8,9);
-        System.out.println("Food01 created");
-        Square.getInstance().addFood(food01);
-        System.out.println("Food01 added");
-        Square.getInstance().printFood();
-
-        Food food02 = new Food(10,10);
-        Square.getInstance().addFood(food02);
-        System.out.println("Food02 added");
-        Square.getInstance().printFood();
     }
 
     public static void main(String args[])

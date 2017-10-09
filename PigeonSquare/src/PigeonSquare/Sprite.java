@@ -1,12 +1,10 @@
 package PigeonSquare;
 
-import javafx.animation.TranslateTransition;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.util.Duration;
 
-class Sprite extends Parent
+public abstract class Sprite extends Parent
 {
     private ImageView imageView;
 
@@ -56,64 +54,21 @@ class Sprite extends Parent
         getView().setTranslateY(0);
     }
 
+    public void resetPosition(double x, double y)
+    {
+        setX(x);
+        setY(y);
+    }
+
     /*
     * Manages animation when moving.
      */
-    public void translateAnimation(int milliSec, double translateX, double translateY)
+    public abstract void translateAnimation(int milliSec, double translateX, double translateY);
+
+
+    //TEST
+    public void printCoordinates()
     {
-        /*
-        System.out.println("Location before relocation = " + getX() + ","
-                + getY() + ")");
-
-        getTimeline().setCycleCount(1);
-
-        KeyFrame keyFrame = new KeyFrame(Duration.millis(milliSec),
-                new KeyValue(getView().xProperty(), translateX),
-                new KeyValue(getView().yProperty(), translateY));
-
-        KeyFrame anim = new KeyFrame(Duration.millis(milliSec),
-                event -> {
-                    setX(getX() + translateX);
-                    setY(getY() + translateY);
-                    checkForCollision();
-                });
-
-        getTimeline().getKeyFrames().add(keyFrame);
-
-       getTimeline().setOnFinished(event ->
-               System.out.println("Location after relocation = " + getX() + "," + getY() + ")"));
-
-       getTimeline().play();*/
-
-        System.out.println("Location BEFORE relocation = " + getX() + "," + getY() + ")"); //TEST
-
-        //Creating Translate Transition
-        TranslateTransition translateTransition = new TranslateTransition();
-
-        //Setting the duration of the transition
-        translateTransition.setDuration(Duration.millis(milliSec));
-
-        //Setting the node for the transition
-        translateTransition.setNode(getView());
-
-        //Setting the value of the transition along the x and y axis.
-        translateTransition.setByX(translateX);
-        translateTransition.setByY(translateY);
-
-        //Setting the cycle count for the transition
-        translateTransition.setCycleCount(1);
-
-        //Setting auto reverse value to false
-        translateTransition.setAutoReverse(false);
-
-        translateTransition.setOnFinished(event -> {
-            updatePosition();
-            System.out.println("Location AFTER relocation = " + getX() + "," + getY() + ")"); //TEST
-        });
-
-
-        //Playing the animation
-        translateTransition.play();
-
+        System.out.println("x: " + getX() + ", y: " + getY());
     }
 }

@@ -1,33 +1,84 @@
 package PigeonSquare;
 
-public class Pigeon extends Thread
+import javafx.animation.*;
+import javafx.scene.image.Image;
+import javafx.util.Duration;
+
+public class Pigeon extends Sprite implements Runnable
 {
-    private int posX;
-    private int posY;
+    /* Avoids to make pigeon move several times in a row when a human is crossing its entire sprite */
+    private boolean isAfraid;
 
-    private PigeonSprite sprite;
-
-    public Pigeon(int x, int y, int h)
+    Pigeon(double x, double y, double h)
     {
-        posX = x;
-        posY = y;
-        sprite = new PigeonSprite(x, y, h);
+        super(new Image(Pigeon.class.getResourceAsStream("images/pigeon.png")), x, y, h);
+        isAfraid = false;
     }
 
-    public PigeonSprite getSprite()
+    //TODO: manage events with food
+
+    public int isFoodCloseAndGood()
     {
-        return sprite;
+        return (SquareController.getInstance().getClosestFreshFood(getX(), getY()));
+    }
+
+    public boolean isAfraid()
+    {
+        return isAfraid;
+    }
+
+    public void setAfraid(boolean bool)
+    {
+        isAfraid = bool;
+    }
+
+    public void flyAway()
+    {
+        setAfraid(true);
+        translateAnimation(500, 20, 20);
+        printCoordinates();
+    }
+
+    public void peckAtFood()
+    {
+        System.out.println("I Found Food !!");
+    }
+
+    @Override
+    public void translateAnimation(int milliSec, double translateX, double translateY)
+    {
+        TranslateTransition translateTransition = new TranslateTransition();
+
+        translateTransition.setDuration(Duration.millis(milliSec));
+
+        translateTransition.setNode(getView());
+
+        translateTransition.setByX(translateX);
+        translateTransition.setByY(translateY);
+
+        translateTransition.setCycleCount(1);
+
+        translateTransition.setAutoReverse(false);
+
+        translateTransition.setOnFinished(event -> {
+            updatePosition();
+        });
+
+        translateTransition.play();
     }
 
     @Override
     public void run()
     {
-        int n = 0;
-        while (n++ < 10)
+        while (true)
         {
-            while (!(getSprite().isThereHuman()) && Square.getInstance().getClosestFood(posX, posY) == -1)
+            if (isFoodCloseAndGood() != -1)
             {
-                System.out.println("in the safe while: " + getSprite().isThereHuman());
+                peckAtFood();
+                break;
+            }
+            while (isFoodCloseAndGood() == -1)
+            {
                 try
                 {
                     Thread.sleep(10);
@@ -36,16 +87,6 @@ public class Pigeon extends Thread
                 {
                     break;
                 }
-            }
-            if (getSprite().isThereHuman() == true)
-            {
-                System.out.println("coucou!!!!");
-                getSprite().translateAnimation(2000, 200, 200);
-            }
-            if (Square.getInstance().getClosestFood(posX, posY) != -1)
-            {
-                System.out.println("I Found Food !!");
-                break;
             }
         }
     } //run

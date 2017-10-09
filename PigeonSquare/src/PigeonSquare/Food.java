@@ -1,16 +1,33 @@
 package PigeonSquare;
 
-public class Food extends Thread
-{
-    int posx;
-    int posy;
-    boolean healthy;
+import javafx.scene.CacheHint;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
 
-    public Food(int x, int y)
+public class Food extends Sprite implements Runnable
+{
+    private boolean isFresh;
+
+    public Food(double x, double y, double h)
     {
-        posx = x;
-        posy = y;
-        healthy = true;
+        super(new Image(Human.class.getResourceAsStream("images/food.png")), x, y, h);
+        isFresh = true;
+    }
+
+    public boolean isFresh()
+    {
+        return isFresh;
+    }
+
+    public void rottenFood()
+    {
+        isFresh = false;
+        ColorAdjust blackout = new ColorAdjust();
+        blackout.setBrightness(-1.0);
+
+        getView().setEffect(blackout);
+        getView().setCache(true);
+        getView().setCacheHint(CacheHint.SPEED);
     }
 
     public void run()
@@ -20,7 +37,12 @@ public class Food extends Thread
         }
         catch (InterruptedException e) {}
 
-        healthy = false;
-        System.out.println("Food has become unhealthy");
+        rottenFood();
+        System.out.println("Food has gone off");
+    }
+
+    @Override
+    public void translateAnimation(int milliSec, double translateX, double translateY) {
+
     }
 }
