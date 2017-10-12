@@ -93,14 +93,16 @@ public class SquareController
 
     public void removeFood(Food food)
     {
+        boolean done = false;
         int i = 0;
-        while (i < MAX_FOODS)
+        while (i < MAX_FOODS && done == false)
         {
-            if (foods[i] != null && foods[i].getX() == food.getX() && foods[i].getY() == food.getY())
+            if (foods[i] != null && foods[i].getIndex() == food.getIndex())
             {
                 foods[i].eat();
                 foods[i] = null;
-                //SquareWindow.deleteChild();
+                SquareWindow.deleteFood(food.getIndex());
+                done = true;
             }
             i++;
         }

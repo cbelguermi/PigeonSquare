@@ -6,6 +6,8 @@ import javafx.scene.image.Image;
 
 public class Food extends Sprite implements Runnable
 {
+    private final static int FRESH_TIME = 2000;
+
     private boolean isFresh;
     private boolean exists;
 
@@ -45,7 +47,7 @@ public class Food extends Sprite implements Runnable
     public void run()
     {
         try {
-            Thread.sleep(5000);
+            Thread.sleep(FRESH_TIME);
         }
         catch (InterruptedException e) { }
 

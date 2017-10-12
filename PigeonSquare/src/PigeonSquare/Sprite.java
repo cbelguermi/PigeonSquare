@@ -7,6 +7,7 @@ import javafx.scene.image.ImageView;
 public abstract class Sprite extends Parent
 {
     private ImageView imageView;
+    private int index;
 
     public Sprite(Image image, double x, double y, double height)
     {
@@ -19,6 +20,12 @@ public abstract class Sprite extends Parent
 
         this.getChildren().add(imageView);
 
+        index = SquareWindow.fetchAddChildrenNumber();
+    }
+
+    public int getIndex()
+    {
+        return index;
     }
 
     public ImageView getView()

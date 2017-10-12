@@ -1,6 +1,7 @@
 package pigeonsquare;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -16,12 +17,28 @@ public class SquareWindow extends Application
     public final static int SCENE_HEIGHT = 500;
     public final static int ITEM_HEIGHT = 50;
 
+    private static volatile int deletedFood = 0;
+    private static volatile int childrenCreated = 0;
+
     private static Group root;
     private static Scene scene;
 
-    public static void deleteChild ()
+    public static synchronized int fetchAddChildrenNumber()
     {
-        root.getChildren().remove(0,1);
+        int ret = childrenCreated;
+        childrenCreated++;
+        return ret;
+    }
+
+    public static synchronized void deleteFood(int index)
+    {
+        Platform.runLater(new Runnable() {
+            public void run() {
+                System.out.println("Hello World !!");
+                root.getChildren().remove(index-deletedFood);
+                deletedFood++;
+            }
+        });
     }
 
     public static Group getRoot()
@@ -51,14 +68,10 @@ public class SquareWindow extends Application
                     Food food = new Food(me.getSceneX()-(ITEM_HEIGHT/2), me.getSceneY()-(ITEM_HEIGHT/2), ITEM_HEIGHT);
                     SquareController.getInstance().addFood(food);
                 }
-                else if  (me.getButton() == MouseButton.MIDDLE)
-                {
-                    System.out.println("Try to delete" + root.getChildren());
-                    deleteChild();
-                }
-
             }
         });
+
+
         /* Set elements on scene */
         //Human passerBy = new Human(0, 0, 50);
         //SquareController.getInstance().addHuman(passerBy);
@@ -72,4 +85,6 @@ public class SquareWindow extends Application
     {
         launch(args);
     }
+
+
 }
