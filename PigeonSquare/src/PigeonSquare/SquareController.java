@@ -1,11 +1,11 @@
-package PigeonSquare;
+package pigeonsquare;
 
 public class SquareController
 {
     private static final int TOO_FAR = SquareWindow.SCENE_HEIGHT;
     private static final int MAX_FOODS = 10;
-    private static final int MAX_HUMANS = 2;
-    private static final int MAX_PIGEONS = 8;
+    private static final int MAX_HUMANS = 10;
+    private static final int MAX_PIGEONS = 10;
 
     private Food[] foods;
     private Pigeon[] pigeons;
@@ -56,9 +56,14 @@ public class SquareController
                 pigeons[i] = pigeon;
                 Thread threadPigeon = new Thread(pigeon);
                 threadPigeon.start();
+                SquareWindow.getRoot().getChildren().add(pigeon);
                 done = true;
             }
             i++;
+        }
+        if (i >= MAX_PIGEONS)
+        {
+            System.out.println("Stop adding pigeons !!");
         }
         return done;
     }
@@ -74,11 +79,31 @@ public class SquareController
                 foods[i] = food;
                 Thread threadFood = new Thread(food);
                 threadFood.start();
+                SquareWindow.getRoot().getChildren().add(food);
                 done = true;
             }
             i++;
         }
+        if (i >= MAX_FOODS)
+        {
+            System.out.println("Stop playing with food !!");
+        }
         return done;
+    }
+
+    public void removeFood(Food food)
+    {
+        int i = 0;
+        while (i < MAX_FOODS)
+        {
+            if (foods[i] != null && foods[i].getX() == food.getX() && foods[i].getY() == food.getY())
+            {
+                foods[i].eat();
+                foods[i] = null;
+                //SquareWindow.deleteChild();
+            }
+            i++;
+        }
     }
 
     public void printFoods()
@@ -92,19 +117,25 @@ public class SquareController
         }
     }
 
-    public int getClosestFreshFood(double x, double y)
+    public Food getClosestFreshFood(double x, double y)
     {
         double distance = TOO_FAR;
+        Food closestFood = null;
         for (int i = 0; i < MAX_FOODS; i++)
         {
             if (this.foods[i] != null && foods[i].isFresh())
             {
                 // Pythagore a = sqrt((b*b) + (c*c))
-                double newDist = Math.sqrt(Math.pow(foods[i].getX() - x, 2) + Math.pow(foods[i].getY() - y, 2));
-                distance = Math.min (newDist, distance);
+                // double newDist = Math.sqrt(Math.pow(foods[i].getX() - x, 2) + Math.pow(foods[i].getY() - y, 2));
+                double newDist = Math.hypot(foods[i].getX() - x, foods[i].getY() - y);
+                if (newDist < distance)
+                {
+                    distance = newDist;
+                    closestFood = foods[i];
+                }
             }
         }
-        return (distance == TOO_FAR) ? -1 : (int) distance;
+        return (distance == TOO_FAR) ? null : closestFood;
     }
 
     public void checkForCollision(Human human)

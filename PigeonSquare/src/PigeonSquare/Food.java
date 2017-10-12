@@ -1,4 +1,4 @@
-package PigeonSquare;
+package pigeonsquare;
 
 import javafx.scene.CacheHint;
 import javafx.scene.effect.ColorAdjust;
@@ -7,16 +7,23 @@ import javafx.scene.image.Image;
 public class Food extends Sprite implements Runnable
 {
     private boolean isFresh;
+    private boolean exists;
 
     public Food(double x, double y, double h)
     {
         super(new Image(Human.class.getResourceAsStream("images/food.png")), x, y, h);
         isFresh = true;
+        exists  = true;
     }
 
     public boolean isFresh()
     {
         return isFresh;
+    }
+
+    public boolean exists()
+    {
+        return exists;
     }
 
     public void rottenFood()
@@ -30,19 +37,27 @@ public class Food extends Sprite implements Runnable
         getView().setCacheHint(CacheHint.SPEED);
     }
 
+    public void eat()
+    {
+         exists = false;
+    }
+
     public void run()
     {
         try {
             Thread.sleep(5000);
         }
-        catch (InterruptedException e) {}
+        catch (InterruptedException e) { }
 
-        rottenFood();
-        System.out.println("Food has gone off");
+        if (exists)
+        {
+            rottenFood();
+            System.out.println("Food has gone off");
+        }
     }
 
     @Override
-    public void translateAnimation(int milliSec, double translateX, double translateY) {
+    public void translateAnimation(double translateX, double translateY) {
 
     }
 }

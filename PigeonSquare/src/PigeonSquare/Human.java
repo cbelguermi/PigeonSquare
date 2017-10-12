@@ -1,4 +1,4 @@
-package PigeonSquare;
+package pigeonsquare;
 
 import java.util.Random;
 import javafx.animation.*;
@@ -16,12 +16,12 @@ public class Human extends Sprite implements Runnable
     }
 
     @Override
-    public void translateAnimation(int milliSec, double translateX, double translateY)
+    public void translateAnimation(double translateX, double translateY)
     {
         Timeline timeline = new Timeline();
         final int microMillisDuration = 10;
 
-        timeline.setCycleCount(milliSec / microMillisDuration);
+        timeline.setCycleCount(10000 / microMillisDuration);
 
         KeyFrame keyFrame = new KeyFrame(Duration.millis(microMillisDuration),
                 event -> {
@@ -42,12 +42,12 @@ public class Human extends Sprite implements Runnable
             if (r.nextInt(2) == 1)
             {
                 resetPosition(0, 0);
-                translateAnimation(10000, SquareWindow.SCENE_WIDTH, SquareWindow.SCENE_HEIGHT);
+                translateAnimation(SquareWindow.SCENE_WIDTH, SquareWindow.SCENE_HEIGHT);
             }
             else
             {
                 resetPosition(SquareWindow.SCENE_WIDTH, SquareWindow.SCENE_HEIGHT);
-                translateAnimation(10000, -SquareWindow.SCENE_WIDTH, -SquareWindow.SCENE_HEIGHT);
+                translateAnimation(-SquareWindow.SCENE_WIDTH, -SquareWindow.SCENE_HEIGHT);
             }
         }
     }

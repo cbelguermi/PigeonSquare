@@ -1,4 +1,4 @@
-package PigeonSquare;
+package pigeonsquare;
 
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
@@ -63,7 +63,7 @@ public abstract class Sprite extends Parent
     /*
     * Manages animation when moving.
      */
-    public abstract void translateAnimation(int milliSec, double translateX, double translateY);
+    public abstract void translateAnimation(double translateX, double translateY);
 
 
     //TEST
