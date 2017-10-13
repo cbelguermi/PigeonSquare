@@ -1,21 +1,26 @@
 package pigeonsquare;
 
+import java.util.concurrent.CopyOnWriteArrayList;
+
 public class SquareController
 {
-    private static final int TOO_FAR = SquareWindow.SCENE_HEIGHT;
-    private static final int MAX_FOODS = 10;
-    private static final int MAX_HUMANS = 10;
-    private static final int MAX_PIGEONS = 10;
+    private static final int TOO_FAR = (SquareWindow.SCENE_HEIGHT / 2);
+    private static final int MAX = 10;
+    //private static final int MAX_HUMANS = 10;
 
-    private Food[] foods;
-    private Pigeon[] pigeons;
-    private Human[] humans;
+    /**
+     * foods: array of Food items currently running and on screen.
+     * pigeons: array of Pigeon items currently running and on screen.
+     */
+    private static CopyOnWriteArrayList<Food> foods;
+    private static CopyOnWriteArrayList<Pigeon> pigeons;
+    //private Human[] humans;
 
     private SquareController()
     {
-        foods = new Food[MAX_FOODS];
-        pigeons = new Pigeon[MAX_PIGEONS];
-        humans = new Human[MAX_HUMANS];
+        foods = new CopyOnWriteArrayList<>();
+        pigeons = new CopyOnWriteArrayList<>();
+        //humans = new Human[MAX_HUMANS];
     }
 
     private static SquareController SQUARECONTROLLER = new SquareController();
@@ -25,115 +30,95 @@ public class SquareController
         return SQUARECONTROLLER;
     }
 
-    //TODO: remove these disgusting inter-duplicated methods
-
-    public boolean addHuman(Human human)
+    private CopyOnWriteArrayList getArrayList(String type)
     {
-        boolean done = false;
-        int i = 0;
-        while (done == false && i < MAX_HUMANS)
+        if (type.equals("pigeons"))
         {
-            if (humans[i] == null)
+            return pigeons;
+        }
+        else if (type.equals("foods"))
+        {
+            return foods;
+        }
+        return null;
+    }
+
+    /**
+     * Creates a new thread responsible corresponding to one particular item on screen that has been added by the user
+     * (Pigeon or Food).
+     *
+     * @param elementOf Sprite type to be added and be bound to a thread
+     * @return true if element has been successfully added, false otherwise
+     * @throws Exception if element isn't from a proper type (Pigeon or Food)
+     */
+    public boolean addElement(String elementOf, double x, double y, double h) throws Exception
+    {
+        if (!elementOf.equals("pigeons") && !elementOf.equals("foods"))
+        {
+            throw new Exception("Element type don't match correct item types");
+        }
+        boolean done = false;
+        if (getArrayList(elementOf).size() < MAX)
+        {
+            Runnable element;
+            if (elementOf.equals("pigeons"))
             {
-                humans[i] = human;
-                Thread threadHuman = new Thread(human);
-                threadHuman.start();
-                done = true;
+                element = new Pigeon(x, y, h);
             }
-            i++;
+            else
+            {
+                element = new Food(x, y, h);
+            }
+            getArrayList(elementOf).add(element);
+            Thread thread = new Thread(element);
+            thread.start();
+            SquareWindow.getRoot().getChildren().add((Sprite) element);
+            ((Sprite) element).printCoordinates(elementOf); //TEST
+            done = true;
+        }
+        else
+        {
+            System.out.println("Stop flooding with sprites!!"); //TEST
         }
         return done;
     }
 
-    public boolean addPigeon(Pigeon pigeon)
+    /**
+     * Updates state of food element eaten by a pigeon and removes the food from the list of foods.
+     *
+     * @param food eaten by a pigeon, to be removed from list
+     * @return true if food has been successfully updated and removed, false otherwise
+     */
+    public synchronized boolean removeFood(Food food)
     {
         boolean done = false;
-        int i = 0;
-        while (done == false && i < MAX_PIGEONS)
+        for (Food foodItem : foods)
         {
-            if (pigeons[i] == null)
+            if ((food!= null) && foodItem.getIndex() == food.getIndex())
             {
-                pigeons[i] = pigeon;
-                Thread threadPigeon = new Thread(pigeon);
-                threadPigeon.start();
-                SquareWindow.getRoot().getChildren().add(pigeon);
+                food.printCoordinates("foodToBeEaten"); //TEST
+                food.getEaten();
+                SquareWindow.deleteFood(food);
+                foods.remove(foods.indexOf(foodItem));
+                //food = null;
                 done = true;
             }
-            i++;
-        }
-        if (i >= MAX_PIGEONS)
-        {
-            System.out.println("Stop adding pigeons !!");
         }
         return done;
     }
 
-    public boolean addFood(Food food)
-    {
-        boolean done = false;
-        int i = 0;
-        while (done == false && i < MAX_FOODS)
-        {
-            if (foods[i] == null)
-            {
-                foods[i] = food;
-                Thread threadFood = new Thread(food);
-                threadFood.start();
-                SquareWindow.getRoot().getChildren().add(food);
-                done = true;
-            }
-            i++;
-        }
-        if (i >= MAX_FOODS)
-        {
-            System.out.println("Stop playing with food !!");
-        }
-        return done;
-    }
-
-    public void removeFood(Food food)
-    {
-        boolean done = false;
-        int i = 0;
-        while (i < MAX_FOODS && done == false)
-        {
-            if (foods[i] != null && foods[i].getIndex() == food.getIndex())
-            {
-                foods[i].eat();
-                foods[i] = null;
-                SquareWindow.deleteFood(food.getIndex());
-                done = true;
-            }
-            i++;
-        }
-    }
-
-    public void printFoods()
-    {
-        for (int i = 0; i < MAX_FOODS; i++)
-        {
-            if (this.foods[i] != null)
-            {
-                System.out.println(this.foods[i].getX() + "-" + this.foods[i].getY() + " : " + this.foods[i].isFresh());
-            }
-        }
-    }
-
-    public Food getClosestFreshFood(double x, double y)
+    public synchronized Food getClosestFreshFood(double x, double y)
     {
         double distance = TOO_FAR;
         Food closestFood = null;
-        for (int i = 0; i < MAX_FOODS; i++)
+        for (Food foodItem : foods)
         {
-            if (this.foods[i] != null && foods[i].isFresh())
+            if (foodItem.isFresh())
             {
-                // Pythagore a = sqrt((b*b) + (c*c))
-                // double newDist = Math.sqrt(Math.pow(foods[i].getX() - x, 2) + Math.pow(foods[i].getY() - y, 2));
-                double newDist = Math.hypot(foods[i].getX() - x, foods[i].getY() - y);
-                if (newDist < distance)
-                {
+                double newDist = Math.hypot(foodItem.getX() - x, foodItem.getY() - y);
+                if (newDist < distance) {
                     distance = newDist;
-                    closestFood = foods[i];
+                    closestFood = foodItem;
                 }
             }
         }

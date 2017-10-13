@@ -6,7 +6,7 @@ import javafx.scene.image.Image;
 
 public class Food extends Sprite implements Runnable
 {
-    private final static int FRESH_TIME = 2000;
+    private final static int FRESH_TIME = 10000;
 
     private boolean isFresh;
     private boolean exists;
@@ -28,7 +28,7 @@ public class Food extends Sprite implements Runnable
         return exists;
     }
 
-    public void rottenFood()
+    public void getRotten()
     {
         isFresh = false;
         ColorAdjust blackout = new ColorAdjust();
@@ -39,21 +39,22 @@ public class Food extends Sprite implements Runnable
         getView().setCacheHint(CacheHint.SPEED);
     }
 
-    public void eat()
+    public void getEaten()
     {
          exists = false;
     }
 
     public void run()
     {
-        try {
+        try
+        {
             Thread.sleep(FRESH_TIME);
         }
         catch (InterruptedException e) { }
 
         if (exists)
         {
-            rottenFood();
+            getRotten();
             System.out.println("Food has gone off");
         }
     }

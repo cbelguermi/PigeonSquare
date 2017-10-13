@@ -1,17 +1,17 @@
 package pigeonsquare;
 
 import javafx.animation.*;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
-import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
+
+import java.util.Random;
 
 public class Pigeon extends Sprite implements Runnable
 {
-    /* Avoids to make pigeon move several times in a row when a human is crossing its entire sprite */
-    private boolean isAfraid;
-    private final static double VITESSE = 0.2;
+    private boolean isAfraid; // Avoids to make pigeon flyAway several times in a row when human is crossing its sprite
+    private final static double VELOCITY = 0.2;
     private TranslateTransition translateTransition;
 
     Pigeon(double x, double y, double h)
@@ -19,17 +19,21 @@ public class Pigeon extends Sprite implements Runnable
         super(new Image(Pigeon.class.getResourceAsStream("images/pigeon.png")), x, y, h);
         isAfraid = false;
 
-        this.setOnMouseClicked(new EventHandler<MouseEvent>(){
-
-            public void handle(MouseEvent me){
-                System.out.println("Why do you hit me ??");
+        this.setOnMouseClicked(me ->
+        {
+            if (me.getButton() == MouseButton.MIDDLE)
+            {
+                flyAway();
             }
         });
     }
 
-    //TODO: manage events with food
-
-    public Food isFoodCloseAndGood()
+    /**
+     * Interrogates the controller to get the coordinates of eatable food.
+     *
+     * @return Food with valid coordinates if there is close and fresh food, null otherwise
+     */
+    public Food isCloseAndFreshFood()
     {
         return (SquareController.getInstance().getClosestFreshFood(getX(), getY()));
     }
@@ -44,24 +48,54 @@ public class Pigeon extends Sprite implements Runnable
         isAfraid = bool;
     }
 
+    public double[] randomCoordinates()
+    {
+        double randPos[] = new double[2];
+        Random r = new Random();
+        if (getX() > SquareWindow.SCENE_WIDTH / 2)
+        {
+            // go to the left
+            randPos[0] = - (r.nextInt(100 - 20) + 20);
+        }
+        else
+        {
+            // go to the right
+            randPos[0] = r.nextInt(100 - 20) + 20;
+        }
+        if (getY() > SquareWindow.SCENE_HEIGHT / 2)
+        {
+            // go up
+            randPos[1] = - (r.nextInt(100 - 20) + 20);
+        }
+        else
+        {
+            // go down
+            randPos[1] = (r.nextInt(100 - 20) + 20);
+        }
+        return randPos;
+    }
+
     public void flyAway()
     {
         setAfraid(true);
-        translateAnimation(50, 50);
-        printCoordinates();
+        double[] randPos = randomCoordinates();
+        translateAnimation(randPos[0], randPos[1]);
+        printCoordinates("flyAway");
+        setAfraid(false);
+        System.out.println(getIndex() + ": flyAway"); //TEST
     }
 
-    public void peckAtFood(Food food)
+    public void goPeckAtFood(Food food)
     {
-        System.out.println("I Found Food !!");
-        this.translateAnimation(food.getX()-this.getX(), food.getY()-this.getY());
+        translateAnimation(food.getX() - getX(), food.getY() - getY());
+        System.out.println(getIndex() + ": goPeckAtFood"); //TEST
     }
 
     public boolean onFood(Food closestFood)
     {
-        if (this.getX() == closestFood.getX() && this.getY() == closestFood.getY())
+        if (getX() == closestFood.getX()&& getY() == closestFood.getY())
         {
-            System.out.println("Miam !!");
+            System.out.println(getIndex() + ": onFood"); //TEST
             SquareController.getInstance().removeFood(closestFood);
             return true;
         }
@@ -71,6 +105,7 @@ public class Pigeon extends Sprite implements Runnable
 
     public void stopMoving()
     {
+        System.out.println(getIndex() + ": stopMoving"); //TEST
         translateTransition.pause();
         this.setX(this.getX());
         this.setY(this.getY());
@@ -83,11 +118,11 @@ public class Pigeon extends Sprite implements Runnable
     {
         this.translateTransition = new TranslateTransition();
 
-        translateTransition.setDuration(Duration.millis( Math.hypot(translateX, translateY) / VITESSE));
+        translateTransition.setDuration(Duration.millis( Math.hypot(translateX, translateY) / VELOCITY));
         /*
         t = d/v
-        v = 6 (pixels/millisecondes) = VITESSE
-        d = hypot (translateX, translateY)
+        v = 6 (pixels/milliseconds) = VELOCITY
+        d = hypotenuse (translateX, translateY)
         */
 
         translateTransition.setNode(getView());
@@ -99,34 +134,42 @@ public class Pigeon extends Sprite implements Runnable
 
         translateTransition.setAutoReverse(false);
 
-        translateTransition.setOnFinished(event -> {
-            updatePosition();
-        });
+        translateTransition.setOnFinished(event -> updatePosition());
 
-        translateTransition.play();
+        Platform.runLater(() -> translateTransition.play());
     }
 
-
+    /**
+     * Sets a pigeon's general behaviour.
+     *
+     * 1 Pigeon looks around if there is fresh food not too far.
+     * 2 If there is,
+     *      2.1 Pigeon runs towards the food
+     *      2.2 While the food still exists and is still fresh and pigeon hasn't arrived on it, he does nothing but
+     *          move its sprite on screen
+     *      2.3 If food has been taken or got rotten or the pigeon has successfully eaten the food, its sprite stops
+     *          moving
+     */
     @Override
     public void run()
     {
         while (true)
         {
-            Food closestFood = isFoodCloseAndGood();
+            Food closestFood = isCloseAndFreshFood();
             if (closestFood != null)
             {
-                peckAtFood(closestFood);
+                goPeckAtFood(closestFood);
                 while (closestFood.exists() && closestFood.isFresh() && !this.onFood(closestFood))
                 {
                     try {
                         Thread.sleep(10);
                     } catch (InterruptedException e) {
+                        System.out.println("got interrupted");
                         break;
                     }
                 }
                 stopMoving();
             }
-
             // if human ....
 
             try {

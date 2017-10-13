@@ -73,9 +73,11 @@ public abstract class Sprite extends Parent
     public abstract void translateAnimation(double translateX, double translateY);
 
 
-    //TEST
-    public void printCoordinates()
+    /**
+     * For test purposes.
+     */
+    public void printCoordinates(String stamp)
     {
-        System.out.println("x: " + getX() + ", y: " + getY());
+        System.out.println("name: " + stamp + " index: " + index + " x: " + getX() + ", y: " + getY());
     }
 }
