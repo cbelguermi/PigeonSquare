@@ -18,8 +18,9 @@ public class SquareWindow extends Application
     public final static int SCENE_HEIGHT = 500;
     public final static int ITEM_HEIGHT = 50;
 
-    private final String pigeonElement = "pigeons";
-    private final String foodElement = "foods";
+    public final static String PIGEON_ELEMENT = "pigeons";
+    public final static String FOOD_ELEMENT = "foods";
+    public final static String HUMAN_ELEMENT = "humans";
 
     /**
      * Graphical objects
@@ -83,7 +84,7 @@ public class SquareWindow extends Application
             {
                 System.out.println("Send a new pigeon!!"); //TEST
                 try {
-                    SquareController.getInstance().addElement(pigeonElement,
+                    SquareController.getInstance().addElement(PIGEON_ELEMENT,
                             me.getSceneX()-(ITEM_HEIGHT/2), me.getSceneY()-(ITEM_HEIGHT/2), ITEM_HEIGHT);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -93,7 +94,17 @@ public class SquareWindow extends Application
             {
                 System.out.println("Send food!!"); //TEST
                 try {
-                    SquareController.getInstance().addElement(foodElement,
+                    SquareController.getInstance().addElement(FOOD_ELEMENT,
+                            me.getSceneX()-(ITEM_HEIGHT/2), me.getSceneY()-(ITEM_HEIGHT/2), ITEM_HEIGHT);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            else if  (me.getButton() == MouseButton.MIDDLE)
+            {
+                System.out.println("Send somebody!!"); //TEST
+                try {
+                    SquareController.getInstance().addElement(HUMAN_ELEMENT,
                             me.getSceneX()-(ITEM_HEIGHT/2), me.getSceneY()-(ITEM_HEIGHT/2), ITEM_HEIGHT);
                 } catch (Exception e) {
                     e.printStackTrace();

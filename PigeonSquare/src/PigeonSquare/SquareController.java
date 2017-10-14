@@ -4,9 +4,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SquareController
 {
-    private static final int TOO_FAR = (SquareWindow.SCENE_HEIGHT / 2);
-    private static final int MAX = 10;
-    //private static final int MAX_HUMANS = 10;
+    private static final int TOO_FAR = SquareWindow.SCENE_HEIGHT + SquareWindow.SCENE_WIDTH;
+    private static final int MAX_PIGEONS = 10;
+    private static final int MAX_FOOD = 10;
+    private static final int MAX_HUMANS = 3;
 
     /**
      * foods: array of Food items currently running and on screen.
@@ -14,13 +15,14 @@ public class SquareController
      */
     private static CopyOnWriteArrayList<Food> foods;
     private static CopyOnWriteArrayList<Pigeon> pigeons;
+    private static CopyOnWriteArrayList<Human> humans;
     //private Human[] humans;
 
     private SquareController()
     {
         foods = new CopyOnWriteArrayList<>();
         pigeons = new CopyOnWriteArrayList<>();
-        //humans = new Human[MAX_HUMANS];
+        humans = new CopyOnWriteArrayList<>();
     }
 
     private static SquareController SQUARECONTROLLER = new SquareController();
@@ -30,17 +32,19 @@ public class SquareController
         return SQUARECONTROLLER;
     }
 
-    private CopyOnWriteArrayList getArrayList(String type)
+    private CopyOnWriteArrayList<Pigeon> getPigeonsList()
     {
-        if (type.equals("pigeons"))
-        {
-            return pigeons;
-        }
-        else if (type.equals("foods"))
-        {
-            return foods;
-        }
-        return null;
+        return pigeons;
+    }
+
+    private CopyOnWriteArrayList<Food> getFoodList()
+    {
+        return foods;
+    }
+
+    private CopyOnWriteArrayList<Human> getHumanList()
+    {
+        return humans;
     }
 
     /**
@@ -53,34 +57,63 @@ public class SquareController
      */
     public boolean addElement(String elementOf, double x, double y, double h) throws Exception
     {
-        if (!elementOf.equals("pigeons") && !elementOf.equals("foods"))
+        Runnable element;
+        if (elementOf.equals(SquareWindow.PIGEON_ELEMENT))
         {
-            throw new Exception("Element type don't match correct item types");
-        }
-        boolean done = false;
-        if (getArrayList(elementOf).size() < MAX)
-        {
-            Runnable element;
-            if (elementOf.equals("pigeons"))
+            if (getPigeonsList().size() < MAX_PIGEONS)
             {
                 element = new Pigeon(x, y, h);
+                getPigeonsList().add((Pigeon) element);
+                Thread thread = new Thread(element);
+                thread.start();
+                SquareWindow.getRoot().getChildren().add((Sprite) element);
+                ((Sprite) element).printCoordinates(elementOf); //TEST
+                return true;
             }
             else
             {
-                element = new Food(x, y, h);
+                System.out.println("Stop flooding with pigeons !!"); //TEST
             }
-            getArrayList(elementOf).add(element);
-            Thread thread = new Thread(element);
-            thread.start();
-            SquareWindow.getRoot().getChildren().add((Sprite) element);
-            ((Sprite) element).printCoordinates(elementOf); //TEST
-            done = true;
+        }
+        else if (elementOf.equals(SquareWindow.FOOD_ELEMENT))
+        {
+            if (getFoodList().size() < MAX_FOOD)
+            {
+                element = new Food(x, y, h);
+                getFoodList().add((Food) element);
+                Thread thread = new Thread(element);
+                thread.start();
+                SquareWindow.getRoot().getChildren().add((Sprite) element);
+                ((Sprite) element).printCoordinates(elementOf); //TEST
+                return true;
+            }
+            else
+            {
+                System.out.println("Stop flooding with food !!"); //TEST
+            }
+        }
+        else if (elementOf.equals(SquareWindow.HUMAN_ELEMENT))
+        {
+            if (getHumanList().size() < MAX_HUMANS)
+            {
+                element = new Human(x, y, h);
+                getHumanList().add((Human) element);
+                Thread thread = new Thread(element);
+                thread.start();
+                SquareWindow.getRoot().getChildren().add((Sprite) element);
+                ((Sprite) element).printCoordinates(elementOf); //TEST
+                return true;
+            }
+            else
+            {
+                System.out.println("Stop flooding with humans !!"); //TEST
+            }
         }
         else
         {
-            System.out.println("Stop flooding with sprites!!"); //TEST
+            throw new Exception("Element type don't match correct item types");
         }
-        return done;
+        return false;
     }
 
     /**
@@ -125,18 +158,20 @@ public class SquareController
         return (distance == TOO_FAR) ? null : closestFood;
     }
 
-    public void checkForCollision(Human human)
+    public boolean checkForCollision(Pigeon pigeon)
     {
-        for (Pigeon pigeon : pigeons)
+        for (Human human : humans)
         {
-            if (pigeon != null)
+            if (human != null)
             {
-                if (human.getView().getBoundsInParent().intersects(pigeon.getView().getBoundsInParent()) && !pigeon.isAfraid())
+                if (pigeon.getView().getBoundsInParent().intersects(human.getView().getBoundsInParent()) && !pigeon.isAfraid())
                 {
                     pigeon.flyAway();
+                    return true;
                 }
             }
         }
+        return false;
     }
 
 }

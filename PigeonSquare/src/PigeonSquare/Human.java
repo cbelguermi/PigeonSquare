@@ -1,23 +1,48 @@
 package pigeonsquare;
 
 import java.util.Random;
+import javafx.application.Platform;
 import javafx.animation.*;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 
 public class Human extends Sprite implements Runnable
 {
-    private Random r;
+    private final static int WALK_TIME = 2500;
+
+    private TranslateTransition translateTransition;
+    private Random rand;
 
     public Human(double x, double y, double h)
     {
         super(new Image(Human.class.getResourceAsStream("images/passerby.png")), x, y, h);
-        r = new Random();
+        rand = new Random();
     }
 
     @Override
     public void translateAnimation(double translateX, double translateY)
     {
+        double transX = translateX - this.getX();
+        double transY = translateY - this.getY();
+        
+        this.translateTransition = new TranslateTransition();
+
+        translateTransition.setDuration(Duration.millis(WALK_TIME));
+
+        translateTransition.setNode(getView());
+
+        translateTransition.setByX(transX);
+        translateTransition.setByY(transY);
+
+        translateTransition.setCycleCount(1);
+
+        translateTransition.setAutoReverse(false);
+
+        translateTransition.setOnFinished(event -> updatePosition());
+
+        Platform.runLater(() -> translateTransition.play());
+
+/*
         Timeline timeline = new Timeline();
         final int microMillisDuration = 10;
 
@@ -33,23 +58,12 @@ public class Human extends Sprite implements Runnable
         timeline.getKeyFrames().add(keyFrame);
 
         timeline.play();
+*/
     }
 
     public void randomMove()
     {
-        if (r.nextInt(100) >= 70) // move
-        {
-            if (r.nextInt(2) == 1)
-            {
-                resetPosition(0, 0);
-                translateAnimation(SquareWindow.SCENE_WIDTH, SquareWindow.SCENE_HEIGHT);
-            }
-            else
-            {
-                resetPosition(SquareWindow.SCENE_WIDTH, SquareWindow.SCENE_HEIGHT);
-                translateAnimation(-SquareWindow.SCENE_WIDTH, -SquareWindow.SCENE_HEIGHT);
-            }
-        }
+        translateAnimation(rand.nextInt(SquareWindow.SCENE_WIDTH), rand.nextInt(SquareWindow.SCENE_HEIGHT));
     }
 
     public void run()
@@ -58,7 +72,7 @@ public class Human extends Sprite implements Runnable
         {
             randomMove();
             try {
-                Thread.sleep(2000);
+                Thread.sleep(WALK_TIME+500);
             }
             catch (InterruptedException e) {}
         }

@@ -170,7 +170,15 @@ public class Pigeon extends Sprite implements Runnable
                 }
                 stopMoving();
             }
-            // if human ....
+            if (SquareController.getInstance().checkForCollision(this))
+            {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    System.out.println("got interrupted");
+                    break;
+                }
+            }
 
             try {
                 Thread.sleep(10);
