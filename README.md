@@ -11,9 +11,9 @@
 Pour lancer l'application (en ligne de commande) :
 
 
-1. Se placer dans le dossier `PigeonSquare` :
+1. Se placer dans le dossier `src` :
 
-    `cd PigeonSquare`
+    `cd src`
 
 2. Créer un dossier `build` :
 
