@@ -13,7 +13,7 @@ Pour lancer l'application (en ligne de commande) :
 
 1. Se placer dans le dossier `src` :
 
-    `cd src`
+    `cd pigeonsquare/src`
 
 2. Créer un dossier `build` :
 
