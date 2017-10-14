@@ -4,12 +4,12 @@ import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public abstract class Sprite extends Parent
+abstract class Sprite extends Parent
 {
     private ImageView imageView;
     private int index;
 
-    public Sprite(Image image, double x, double y, double height)
+    Sprite(Image image, double x, double y, double height)
     {
         this.imageView = new ImageView(image);
         this.imageView.setX(x);
@@ -23,37 +23,37 @@ public abstract class Sprite extends Parent
         index = SquareWindow.fetchAddChildrenNumber();
     }
 
-    public int getIndex()
+    int getIndex()
     {
         return index;
     }
 
-    public ImageView getView()
+    ImageView getView()
     {
         return this.imageView;
     }
 
-    public double getX()
+    double getX()
     {
         return getView().getX();
     }
 
-    public double getY()
+    double getY()
     {
         return getView().getY();
     }
 
-    public void setX(double x)
+    void setX(double x)
     {
         getView().setX(x);
     }
 
-    public void setY(double y)
+    void setY(double y)
     {
         getView().setY(y);
     }
 
-    public void updatePosition()
+    void updatePosition()
     {
         setX(getX() + getView().getTranslateX());
         setY(getY() + getView().getTranslateY());
@@ -61,22 +61,16 @@ public abstract class Sprite extends Parent
         getView().setTranslateY(0);
     }
 
-    public void resetPosition(double x, double y)
-    {
-        setX(x);
-        setY(y);
-    }
-
-    /*
-    * Manages animation when moving.
+    /**
+     * Manages animation when moving.
      */
-    public abstract void translateAnimation(double translateX, double translateY);
+    abstract void translateAnimation(double translateX, double translateY);
 
 
     /**
      * For test purposes.
      */
-    public void printCoordinates(String stamp)
+    void printCoordinates(String stamp)
     {
         System.out.println("name: " + stamp + " index: " + index + " x: " + getX() + ", y: " + getY());
     }

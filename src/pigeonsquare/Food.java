@@ -11,24 +11,27 @@ public class Food extends Sprite implements Runnable
     private boolean isFresh;
     private boolean exists;
 
-    public Food(double x, double y, double h)
+    Food(double x, double y, double h)
     {
         super(new Image(Human.class.getResourceAsStream("images/food.png")), x, y, h);
         isFresh = true;
         exists  = true;
     }
 
-    public boolean isFresh()
+    boolean isFresh()
     {
         return isFresh;
     }
 
-    public boolean exists()
+    boolean exists()
     {
         return exists;
     }
 
-    public void getRotten()
+    /**
+     * Set the food to rotten, the pigeons won't eat it.
+     */
+    private void getRotten()
     {
         isFresh = false;
         ColorAdjust blackout = new ColorAdjust();
@@ -39,19 +42,33 @@ public class Food extends Sprite implements Runnable
         getView().setCacheHint(CacheHint.SPEED);
     }
 
-    public void getEaten()
+    void getEaten()
     {
          exists = false;
     }
 
+    /**
+     * The thread sleeps while the food is still fresh. When FRESH_TIME is out, if the food hasn't been eaten by a
+     * pigeon, it gets rotten.
+     */
     public void run()
     {
         try
         {
             Thread.sleep(FRESH_TIME);
         }
-        catch (InterruptedException e) { }
-
+        catch (InterruptedException e)
+        {
+            try
+            {
+                // Remove food from screen before terminating
+                SquareController.getInstance().removeFood(this);
+            }
+            catch (Exception x)
+            {
+                System.out.println("Remove failed");
+            }
+        }
         if (exists)
         {
             getRotten();
@@ -60,7 +77,5 @@ public class Food extends Sprite implements Runnable
     }
 
     @Override
-    public void translateAnimation(double translateX, double translateY) {
-
-    }
-}
+    void translateAnimation(double translateX, double translateY) { }
+} //Food

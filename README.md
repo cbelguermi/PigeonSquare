@@ -1,43 +1,44 @@
-Programmation objet avancée
+# Programmation Orientée Objet Avancée
 
-UQAC, Semestre d'automne 2017
+## Projet « PigeonSquare »
 
-Damien Haurat - Chloé Belguermi
+#### UQAC, Semestre d'automne 2017
+
+##### Damien Haurat - Chloé Belguermi
 
 ==================================================
 
-Lancer l'application (en ligne de commande) :
+Pour lancer l'application (en ligne de commande) :
 
 
-Se placer dans le dossier PigeonSquare :
+1. Se placer dans le dossier `PigeonSquare` :
 
-cd Pigeon
+    `cd PigeonSquare`
 
-Créer un dossier build :
+2. Créer un dossier `build` :
 
-mkdir build 
+    `mkdir build`
 
-Se placer dans le dossier build :
+3. Se placer dans le dossier `build` :
 
-cd build
+    `cd build`
 
-Compiler les fichiers source :
+4. Compiler les fichiers source :
 
-javac -d . ../*.java
+    `javac -d . ../*.java`
 
-Il peut être nécessaire de copier les images au sein du package :
+5. Il peut être nécessaire de copier les images au sein du paquetage :
 
-cp -r ../images ./pigeonsquare/images
+    `cp -r ../images ./pigeonsquare/images`
 
-Exécuter l'application :
+6. Exécuter l'application :
 
-java pigeonsquare.SquareWindow
-
+    `java pigeonsquare.SquareWindow`
 
 ===================================================
 
 Utilisation de l'application :
 
- - Un clic gauche permet placer un pigeon.
- - Un clic droit permet de placer de la nourriture.
- - Un clic à l'aide la molette de la souris permet de placer une personne. 
+* Un clic gauche permet placer un pigeon.
+* Un clic droit permet de placer de la nourriture.
+* Un clic à l'aide la molette de la souris permet de placer une personne. 

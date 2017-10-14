@@ -13,12 +13,19 @@ public class Human extends Sprite implements Runnable
     private TranslateTransition translateTransition;
     private Random rand;
 
-    public Human(double x, double y, double h)
+    Human(double x, double y, double h)
     {
         super(new Image(Human.class.getResourceAsStream("images/passerby.png")), x, y, h);
         rand = new Random();
     }
 
+    /**
+     * Plays the human translation. The duration is the same, so the speed of the human may change since the
+     * translation values are set randomly.
+     *
+     * @param translateX translation on X-axis
+     * @param translateY translation on Y-axis
+     */
     @Override
     public void translateAnimation(double translateX, double translateY)
     {
@@ -41,41 +48,42 @@ public class Human extends Sprite implements Runnable
         translateTransition.setOnFinished(event -> updatePosition());
 
         Platform.runLater(() -> translateTransition.play());
-
-/*
-        Timeline timeline = new Timeline();
-        final int microMillisDuration = 10;
-
-        timeline.setCycleCount(10000 / microMillisDuration);
-
-        KeyFrame keyFrame = new KeyFrame(Duration.millis(microMillisDuration),
-                event -> {
-                    setX(getX() + 1);
-                    setY(getY() + 1);
-                    SquareController.getInstance().checkForCollision(this);
-        });
-
-        timeline.getKeyFrames().add(keyFrame);
-
-        timeline.play();
-*/
     }
 
-    public void randomMove()
+    /**
+     * Sets a random translation on screen within the limits of the window.
+     */
+    private void randomMove()
     {
         translateAnimation(rand.nextInt(SquareWindow.SCENE_WIDTH), rand.nextInt(SquareWindow.SCENE_HEIGHT));
     }
 
+    /**
+     * Moves randomly on screen, pauses and start again.
+     */
     public void run()
     {
         while (true)
         {
             randomMove();
             try {
-                Thread.sleep(WALK_TIME+500);
+                Thread.sleep(WALK_TIME + 500);
             }
-            catch (InterruptedException e) {}
-        }
-    }
+            catch (InterruptedException e)
+            {
+                try
+                {
+                    // Remove human from screen before terminating
+                    SquareController.getInstance().removeHuman(this);
 
-}
+                }
+                catch (Exception x)
+                {
+                    System.out.println("Remove failed");
+                }
+                break;
+            }
+
+        }
+    } //run
+} //Human
