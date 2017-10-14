@@ -11,9 +11,9 @@
 Pour lancer l'application (en ligne de commande) :
 
 
-1. Se placer dans le dossier `src` :
+1. Se placer dans le dossier `src/pigeonsquare` :
 
-    `cd pigeonsquare/src`
+    `cd src/pigeonsquare`
 
 2. Créer un dossier `build` :
 
