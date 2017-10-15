@@ -79,8 +79,6 @@ public class SquareWindow extends Application
                     {
                         System.out.println("Adding pigeon failed");
                     }
-                    System.out.println(getRoot().getChildren());
-
                 }
                 catch (IllegalArgumentException e)
                 {
@@ -95,8 +93,6 @@ public class SquareWindow extends Application
                     {
                         System.out.println("Adding food failed");
                     }
-                    System.out.println(getRoot().getChildren());
-
                 }
                 catch (IllegalArgumentException e)
                 {
@@ -111,7 +107,6 @@ public class SquareWindow extends Application
                     {
                         System.out.println("Adding human failed");
                     }
-                    System.out.println(getRoot().getChildren());
                 }
                 catch (IllegalArgumentException e)
                 {
