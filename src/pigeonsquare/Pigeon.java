@@ -16,6 +16,7 @@ public class Pigeon extends Sprite implements Runnable
     Pigeon(double x, double y, double h)
     {
         super(new Image(Pigeon.class.getResourceAsStream("images/pigeon.png")), x, y, h);
+        translateTransition = new TranslateTransition();
         isAfraid = false;
     }
 
@@ -117,7 +118,11 @@ public class Pigeon extends Sprite implements Runnable
         return false;
     }
 
-    private void stopMoving()
+    /**
+     * Makes the pigeon stop its current move.
+     *
+     */
+    private synchronized void stopMoving()
     {
         translateTransition.pause();
         this.setX(this.getX());
@@ -133,10 +138,8 @@ public class Pigeon extends Sprite implements Runnable
      * @param translateY translation on Y-axis
      */
     @Override
-    void translateAnimation(double translateX, double translateY)
+    synchronized void translateAnimation(double translateX, double translateY)
     {
-        this.translateTransition = new TranslateTransition();
-
         // Duration = (distance of the translation) / speed
         translateTransition.setDuration(Duration.millis( Math.hypot(translateX, translateY) / VELOCITY));
 
@@ -185,7 +188,7 @@ public class Pigeon extends Sprite implements Runnable
                         break;
                     }
                 }
-                stopMoving();
+                stopMoving(); // pigeon is moving since goPeckAtFood has been called
             }
             if (SquareController.getInstance().isHumanNear(this))
             {

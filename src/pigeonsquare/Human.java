@@ -27,7 +27,7 @@ public class Human extends Sprite implements Runnable
      * @param translateY translation on Y-axis
      */
     @Override
-    public void translateAnimation(double translateX, double translateY)
+    synchronized void translateAnimation(double translateX, double translateY)
     {
         double transX = translateX - this.getX();
         double transY = translateY - this.getY();

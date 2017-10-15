@@ -22,7 +22,7 @@ public class SquareWindow extends Application
     final static String FOOD_ELEMENT = "foods";
     final static String HUMAN_ELEMENT = "humans";
 
-    private static Group root;
+    private static Group root = new Group();
 
     /**
      * childrenCreated: number of sprite nodes added to scene since the beginning, no matter if they are removed from
@@ -49,7 +49,8 @@ public class SquareWindow extends Application
      */
     static synchronized void deleteSprite(Sprite sprite)
     {
-        Platform.runLater(() -> root.getChildren().remove(sprite));
+        System.out.println(getRoot().getChildren());
+        Platform.runLater(() -> getRoot().getChildren().remove(sprite));
     }
 
     /**
@@ -66,8 +67,7 @@ public class SquareWindow extends Application
     public void start(Stage primaryStage)
     {
         primaryStage.setTitle("Pigeon Square");
-        root = new Group();
-        Scene scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT, Color.WHITE);
+        Scene scene = new Scene(getRoot(), SCENE_WIDTH, SCENE_HEIGHT, Color.WHITE);
 
         /* Main user interaction */
         scene.setOnMouseClicked(me -> {
@@ -79,6 +79,8 @@ public class SquareWindow extends Application
                     {
                         System.out.println("Adding pigeon failed");
                     }
+                    System.out.println(getRoot().getChildren());
+
                 }
                 catch (IllegalArgumentException e)
                 {
@@ -93,6 +95,8 @@ public class SquareWindow extends Application
                     {
                         System.out.println("Adding food failed");
                     }
+                    System.out.println(getRoot().getChildren());
+
                 }
                 catch (IllegalArgumentException e)
                 {
@@ -107,6 +111,7 @@ public class SquareWindow extends Application
                     {
                         System.out.println("Adding human failed");
                     }
+                    System.out.println(getRoot().getChildren());
                 }
                 catch (IllegalArgumentException e)
                 {

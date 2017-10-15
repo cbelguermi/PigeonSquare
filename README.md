@@ -41,4 +41,18 @@ Utilisation de l'application :
 
 * Un clic gauche permet placer un pigeon.
 * Un clic droit permet de placer de la nourriture.
-* Un clic à l'aide la molette de la souris permet de placer une personne. 
+* Un clic à l'aide la molette de la souris permet de placer une personne.
+
+Jusqu'à dix pigeons, trois humains et dix éléments de nourriture peuvent être placés simultanément dans la fenêtre.
+
+Une fois mangé, un élément de nourriture disparaît de la fenêtre et « libère » ainsi une place pour un autre élément de nourriture.
+
+Une fois placé, un humain se déplace aléatoirement au sein de la fenêtre. Il ne peut être enlevé.
+
+===================================================
+
+Crédits images :
+
+* `pigeon.png` : http://www.downloadclipart.net/download/3507/pigeon-svg
+* `food.png` : créée avec l'application Pages.
+* `passerby.png` : créée avec l'application Pages.

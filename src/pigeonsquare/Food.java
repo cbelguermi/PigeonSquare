@@ -76,6 +76,7 @@ public class Food extends Sprite implements Runnable
         }
     }
 
+    // Not used
     @Override
     void translateAnimation(double translateX, double translateY) { }
 } //Food

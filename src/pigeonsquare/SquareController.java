@@ -18,9 +18,9 @@ class SquareController
      * pigeons: array of Pigeon items currently running and on screen.
      * humans: array of Human items currently running and on screen.
      */
-    private static CopyOnWriteArrayList<Food> foods;
-    private static CopyOnWriteArrayList<Pigeon> pigeons;
-    private static CopyOnWriteArrayList<Human> humans;
+    private CopyOnWriteArrayList<Food> foods;
+    private CopyOnWriteArrayList<Pigeon> pigeons;
+    private CopyOnWriteArrayList<Human> humans;
 
     private SquareController()
     {
@@ -61,7 +61,7 @@ class SquareController
      * @return true if element has been successfully added, false otherwise
      * @throws IllegalArgumentException if element isn't from a proper type (Pigeon or Food)
      */
-    boolean addElement(String elementOf, double x, double y, double h) throws IllegalArgumentException
+    synchronized boolean addElement(String elementOf, double x, double y, double h) throws IllegalArgumentException
     {
         Runnable element;
         switch (elementOf)
@@ -77,7 +77,6 @@ class SquareController
                     Thread thread = new Thread(element);
                     thread.start();
                     SquareWindow.getRoot().getChildren().add((Sprite) element);
-                    ((Sprite) element).printCoordinates(elementOf); //TEST
                     return true;
                 }
                 else {
